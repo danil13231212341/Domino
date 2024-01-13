@@ -1,7 +1,7 @@
 // Класс для представления костяшек
-class Domino {
-    private int firstHalf;
-    private int secondHalf;
+class Domino implements DominoStatus {
+    private final int firstHalf;
+    private final int secondHalf;
     private boolean flipped;
 
     public Domino(int firstHalf, int secondHalf) {
@@ -9,13 +9,16 @@ class Domino {
         this.secondHalf = secondHalf;
     }
 
-    public int getFirstHalf() {
-        return firstHalf;
+    @Override
+    public int getLeftHalf() {
+        return flipped ? secondHalf : firstHalf;
     }
 
-    public int getSecondHalf() {
-        return secondHalf;
+    @Override
+    public int getRightHalf() {
+        return flipped ? firstHalf : secondHalf;
     }
+
     public boolean isFlipped() {
         return flipped;
     }
@@ -27,6 +30,7 @@ class Domino {
     public int getSum() {
         return firstHalf + secondHalf;
     }
+
     @Override
     public String toString() {
         if (flipped) {

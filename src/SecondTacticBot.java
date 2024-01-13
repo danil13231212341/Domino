@@ -7,7 +7,7 @@ class SecondTacticBot extends Bot {
     }
 
     @Override
-    public Domino makeMove(Board board) {
+    public Domino makeMove(BoardStatus board) {
         List<Domino> matchingDominoes = findMatchingDominoes(board);
 
         if (matchingDominoes.isEmpty()) {

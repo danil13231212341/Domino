@@ -1,37 +1,38 @@
 import java.util.ArrayList;
 import java.util.List;
+
 // Абстрактный класс для бота
-abstract class Bot {
+abstract class Bot implements BotTactic {
     protected String name;
-    protected List<Domino> hand;
+    protected Hand hand;
 
     public Bot(String name) {
         this.name = name;
-        hand = new ArrayList<>();
+        hand = new Hand();
     }
 
     public String getName() {
         return name;
     }
 
-    public List<Domino> getHand() {
-        return hand;
+    public HandStatus getHandStatus() {
+        return hand.getStatus();
     }
 
     public void addDomino(Domino domino) {
-        hand.add(domino);
+        hand.addDomino(domino);
     }
 
-    public abstract Domino makeMove(Board board);
+    public abstract Domino makeMove(BoardStatus board);
 
-    protected List<Domino> findMatchingDominoes(Board board) {
+    // Определяет, может ли играемая домино быть положена на доску
+    protected List<Domino> findMatchingDominoes(BoardStatus board) {
         List<Domino> matchingDominoes = new ArrayList<>();
 
-        for (Domino domino : hand) {
-            if (board.canPlace(domino)) {
-                matchingDominoes.add(domino);
-            }
+        for(int i = 0; i < getHandStatus().size(); i++){
+            Domino domino = getHandStatus().peek(i);
         }
         return matchingDominoes;
     }
+
 }

@@ -1,52 +1,68 @@
 import java.util.ArrayList;
 import java.util.List;
+
 // Класс для представления доски
-class Board {
-    private List<Domino> dominoes;
+class Board implements BoardStatus {
+    private List<DominoStatus> dominoes;
+    private final BoardProxy boardStatus;
 
     public Board() {
         dominoes = new ArrayList<>();
+        this.boardStatus = new BoardProxy(this);
     }
 
     public void addDomino(Domino domino) {
         dominoes.add(domino);
     }
 
-    public List<Domino> getDominoes() {
-        return dominoes;
+    public BoardStatus getStatus() {
+        return boardStatus;
     }
 
-    public boolean canPlace(Domino domino) {
-        if (dominoes.isEmpty()) {
-            return true;
-        }
-        int firstHalf = domino.getFirstHalf();
-        int secondHalf = domino.getSecondHalf();
-        int firstHalfBoard = dominoes.get(0).getFirstHalf();
-        int secondHalfBoard = dominoes.get(dominoes.size() - 1).getSecondHalf();
-
-        return firstHalf == firstHalfBoard || secondHalf == firstHalfBoard ||
-                firstHalf == secondHalfBoard || secondHalf == secondHalfBoard;
+    @Override
+    public int getLeftValue() {
+        if (dominoes.isEmpty()) return 0;
+        return dominoes.get(0).getLeftHalf();
     }
-    public void placeTile(Domino tile, boolean left) {
-        if (dominoes.isEmpty()) {
-            dominoes.add(tile);
-        } else if (left) {
-            if (tile. getFirstHalf() == dominoes.get(0).getSecondHalf()) {
-                tile.flip();
-                dominoes.add(0, tile);
-            } else {
-                tile.flip();
-                dominoes.add(0, tile);
-            }
-        } else {
-            if (tile.getSecondHalf() == dominoes.get(dominoes.size() - 1). getFirstHalf()) {
-                tile.flip();
-                dominoes.add(tile);
-            } else {
-                tile.flip();
-                dominoes.add(tile);
-            }
-        }
+
+    @Override
+    public int getRightValue() {
+        if (dominoes.isEmpty()) return 0;
+        return dominoes.get(dominoes.size() - 1).getRightHalf();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return dominoes.isEmpty();
+    }
+
+    @Override
+    public DominoStatus peek(int index) {
+         return dominoes.get(index);
+    }
+
+    @Override
+    public int size() {
+        return dominoes.size();
+    }
+
+    @Override
+    public boolean canPlaceLeft(Domino domino) {
+        return isEmpty() || getLeftValue() == domino.getRightHalf();
+    }
+
+    @Override
+    public boolean canPlaceRight(Domino domino) {
+        return isEmpty() || getRightValue() == domino.getLeftHalf();
+    }
+
+    @Override
+    public void placeLeft(Domino domino) {
+        dominoes.add(0, new DominoProxy(domino));
+    }
+
+    @Override
+    public void placeRight(Domino domino) {
+        dominoes.add(new DominoProxy(domino));
     }
 }

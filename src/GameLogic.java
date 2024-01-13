@@ -51,7 +51,7 @@ class GameLogic {
                 Scanner scanner = new Scanner(System.in);
                 scanner.nextLine();
 
-                Domino playedDomino = bot.makeMove(board);
+                Domino playedDomino = bot.makeMove(board.getStatus());
 
                 if (playedDomino != null) {
                     board.addDomino(playedDomino);
@@ -66,7 +66,7 @@ class GameLogic {
 
                 // Если боту удалось сделать ход, проверяем победу
                 if (playedDomino != null) {
-                    if (bot.getHand().isEmpty()) {
+                    if (bot.getHandStatus().isEmpty()) {
                         System.out.println(bot.getName() + " wins!");
                         return;
                     }
@@ -75,26 +75,28 @@ class GameLogic {
         }
 
         // Если колода пуста и никто не может сделать ход, находим бота с наименьшей суммой очков
-        Bot loser = findBotWithMinScore();
-        System.out.println(loser.getName() + " wins!");
+        Bot  victor = findBotWithMinScore();
+        System.out.println(victor.getName() + " wins!");
     }
 
     private void displayGameStatus(Bot currentBot) {
         System.out.println("Current board: ");
-        for (Domino domino : board.getDominoes()) {
-            System.out.print("[ " + domino.getFirstHalf() + " | " + domino.getSecondHalf() + " ] ");
+        for(int i = 0; i < board.getStatus().size(); i++){
+            DominoStatus domino = board.getStatus().peek(i);
+            System.out.print("[ " + domino.getLeftHalf() + " | " + domino.getRightHalf() + " ] ");
         }
         System.out.println("\n");
         for (Bot bot : bots) {
             if (bot == currentBot) {
                 System.out.print("-> " + bot.getName() + ": ");
-                for (Domino domino : bot.getHand()) {
-                    System.out.print("[ " + domino.getFirstHalf() + " | " + domino.getSecondHalf() + " ] ");
+                 for(int i =0; i<bot.getHandStatus().size();i++) {
+                     Domino domino =bot.getHandStatus().peek(i);
+                    System.out.print("[ " + domino.getLeftHalf() + " | " + domino.getRightHalf() + " ] ");
                 }
                 System.out.println();
             } else {
                 System.out.print(bot.getName() + ": ");
-                for (int i = 0; i < bot.getHand().size(); i++) {
+                for (int i = 0; i < bot.getHandStatus().size(); i++) {
                     System.out.print("[ " + "?" + " | " + "?" + " ] ");
                 }
                 System.out.println();
@@ -115,10 +117,10 @@ class GameLogic {
         }
         return botWithMinScore;
     }
-
     private int getScore(Bot bot) {
         int score = 0;
-        for (Domino domino : bot.getHand()) {
+        for(int i =0; i<bot.getHandStatus().size();i++) {
+            Domino domino =bot.getHandStatus().peek(i);
             score += domino.getSum();
         }
         return score;
